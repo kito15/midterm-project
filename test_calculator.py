@@ -14,10 +14,6 @@ def history_manager():
 def plugin_manager():
     return PluginManager()
 
-@pytest.fixture
-def capsys():
-    return pytest.capsys
-
 def test_addition():
     result = add(1, 2)
     assert result == 3
