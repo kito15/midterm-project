@@ -133,7 +133,6 @@ def main():
             user_input = input("> ").strip()
             if not user_input:
                 continue
-            user_input = user_input.lower()
             logger.info(f"User input: {user_input}")
 
             if user_input == 'exit':
@@ -206,11 +205,22 @@ def main():
                 print(command.execute())
                 continue
 
-            parts = user_input.split()
-            if len(parts) != 3:
-                logger.warning("Invalid input format")
-                print("Error: Invalid input format. Please use: operation number1 number2")
+            if user_input.startswith('use_plugin '):
+                parts = user_input.split()
+                if len(parts) < 3:
+                    logger.warning("Invalid plugin command format")
+                    print("Error: Invalid plugin command format. Use: use_plugin <plugin_name> <command> [args...]")
+                    continue
+                plugin_name = parts[1]
+                command = parts[2]
+                args = [float(arg) for arg in parts[3:]]
+                result = plugin_manager.execute_command(plugin_name, command, *args)
+                print(f"Result: {result}")
                 continue
+
+            parts = user_input.split()
+            if len(parts) == 3 and parts[0] in ['add', 'subtract', 'multiply', 'divide']:
+                operation, num1, num2 = parts
 
             operation, num1, num2 = parts
 

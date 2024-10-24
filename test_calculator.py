@@ -95,7 +95,7 @@ def test_repl_addition(capsys):
 def test_repl_subtraction(capsys):
     user_input = "subtract 5 3\nexit\n"
     expected_output = "Result: 2.0\n"
-    with patch('builtins.input', side_effect=user_input.split()):
+    with patch('builtins.input', side_effect=user_input.splitlines()):
         main()
         captured = capsys.readouterr()
         assert expected_output in captured.out
