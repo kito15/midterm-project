@@ -214,11 +214,11 @@ def main():
             
             if user_input == 'save_history':
                 logger.info("User requested to save history")
-                print(history_manager.save_history())
+                print(history_manager.save_history_to_csv('history.csv'))
                 continue
             elif user_input == 'load_history':
                 logger.info("User requested to load history")
-                print(history_manager.load_history())
+                print(history_manager.load_history_from_csv('history.csv'))
                 continue
             elif user_input == 'view_history':
                 logger.info("User requested to view history")
