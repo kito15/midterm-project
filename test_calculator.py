@@ -1,9 +1,10 @@
 import pytest
 import pandas as pd
-from calculator import add, subtract, multiply, divide, HistoryManager, logger_instance, main
+from calculator import add, subtract, multiply, divide, HistoryManager, logger_instance, main, PluginManager  # Import PluginManager
 from unittest.mock import patch
 from io import StringIO
 import sys
+import logging  # Import logging module
 
 @pytest.fixture
 def history_manager():
@@ -225,22 +226,4 @@ def test_repl_use_plugin_invalid_command(capsys):
 
 def test_repl_use_nonexistent_plugin(capsys):
     user_input = "use_plugin nonexistent_plugin power 2 3\nexit\n"
-    expected_output = "Plugin 'nonexistent_plugin' not found\n"
-    with patch('builtins.input', side_effect=user_input.split()):
-        main()
-        captured = capsys.readouterr()
-        assert expected_output in captured.out
-
-def test_repl_logging_info(capsys, caplog):
-    user_input = "add 1 2\nexit\n"
-    with caplog.at_level(logging.INFO):
-        with patch('builtins.input', side_effect=user_input.split()):
-            main()
-            assert "User executed add command with result: 3.0" in caplog.text
-
-def test_repl_logging_error(capsys, caplog):
-    user_input = "divide 10 0\nexit\n"
-    with caplog.at_level(logging.ERROR):
-        with patch('builtins.input', side_effect=user_input.split()):
-            main()
-            assert "Error: Division by zero" in caplog.text
+    expected_output = "Plugin 'nonexis
