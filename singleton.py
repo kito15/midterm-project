@@ -21,8 +21,8 @@ class Logger(metaclass=SingletonMeta):
 class HistoryManager(metaclass=SingletonMeta):
     def __init__(self):
         self._instances = {}
-        self.clear_data()
         self.facade = DataFacade()
+        self.clear_data()
 
     def add_record(self, operation, num1, num2, result):
         self.facade.add_record(operation, num1, num2, result)
@@ -34,7 +34,6 @@ class HistoryManager(metaclass=SingletonMeta):
         return self.facade.load_from_csv(filename)
 
     def view_data(self):
-        return self.facade.view_data()
         return self.facade.view_data()
 
     def clear_data(self):
