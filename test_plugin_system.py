@@ -90,20 +90,22 @@ def test_scientific_error_handling():
     result = calc.cos('invalid')
     assert "Error" in result
 
-def test_plugin_logging():
+def test_plugin_logging(caplog):
     import logging
     from plugins.scientific import ScientificCalculator
     
-    # Capture log messages
-    with self.assertLogs(level='INFO') as logs:
-        calc = ScientificCalculator()
-        calc.get_description()
-        calc.get_commands()
-        calc.power(2, 3)
-        calc.sqrt(16)
-        calc.sin(0)
-        calc.cos(0)
+    # Set log level
+    caplog.set_level(logging.INFO)
+    
+    # Execute operations that generate logs
+    calc = ScientificCalculator()
+    calc.get_description()
+    calc.get_commands()
+    calc.power(2, 3)
+    calc.sqrt(16)
+    calc.sin(0)
+    calc.cos(0)
     
     # Verify log messages were created
-    assert len(logs.output) > 0
-    assert any('INFO' in msg for msg in logs.output)
+    assert len(caplog.records) > 0
+    assert any(record.levelname == 'INFO' for record in caplog.records)

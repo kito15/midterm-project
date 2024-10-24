@@ -146,7 +146,7 @@ def main():
                 parts = user_input.split()
                 if len(parts) < 3:
                     logger.warning("Invalid plugin command format")
-                    print("Error: Invalid plugin command format")
+                    print("Error: Invalid plugin command format. Use: use_plugin <plugin_name> <command> [args...]")
                     continue
                 plugin_name = parts[1]
                 command = parts[2]
