@@ -9,6 +9,9 @@ from calculator.command import AddCommand, SubtractCommand, MultiplyCommand, Div
 from calculator.singleton import Logger, HistoryManager
 from calculator.strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
+# Add the parent directory to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # Configure logging
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
 LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
@@ -25,7 +28,7 @@ class PluginInterface:
     def get_commands(self):
         """Return a dictionary of command names and their functions"""
         raise NotImplementedError
-    
+
     def get_description(self):
         """Return plugin description"""
         raise NotImplementedError
@@ -81,7 +84,7 @@ class PluginManager:
         """List all available plugins and their commands"""
         if not self.plugins:
             return "No plugins available"
-        
+
         output = "Available Plugins:\n"
         for name, plugin in self.plugins.items():
             output += f"\n{name}:\n"
@@ -96,14 +99,14 @@ class PluginManager:
         if plugin_name not in self.plugins:
             logger.error(f"Plugin '{plugin_name}' not found")
             return f"Plugin '{plugin_name}' not found"
-        
+
         plugin = self.plugins[plugin_name]
         commands = plugin.get_commands()
-        
+
         if command not in commands:
             logger.error(f"Command '{command}' not found in plugin '{plugin_name}'")
             return f"Command '{command}' not found in plugin '{plugin_name}'"
-        
+
         try:
             result = commands[command](*args)
             logger.info(f"Executed command '{command}' in plugin '{plugin_name}' with result: {result}")
@@ -121,24 +124,24 @@ def main():
     print("  Plugins: menu, use_plugin <plugin_name> <command> [args...]")
     print("Format for calculations: operation number1 number2")
     print("Type 'exit' to quit")
-    
+
     history_manager = HistoryManager()
     plugin_manager = PluginManager()
-    
+
     while True:
         try:
             user_input = input("> ").strip().lower()
             logger.info(f"User input: {user_input}")
-            
+
             if user_input == 'exit':
                 logger.info("User exited the calculator")
                 break
-            
+
             if user_input == 'menu':
                 logger.info("User requested plugin menu")
                 print(plugin_manager.list_plugins())
                 continue
-            
+
             if user_input.startswith('use_plugin '):
                 parts = user_input.split()
                 if len(parts) < 3:
@@ -152,7 +155,7 @@ def main():
                 result = plugin_manager.execute_command(plugin_name, command, *args)
                 print(f"Result: {result}")
                 continue
-            
+
             if user_input == 'save_history':
                 logger.info("User requested to save history")
                 command = SaveHistoryCommand(history_manager, 'history.csv')
@@ -199,15 +202,15 @@ def main():
                 command = LoadHistoryCommand(history_manager, filename)
                 print(command.execute())
                 continue
-            
+
             parts = user_input.split()
             if len(parts) != 3:
                 logger.warning("Invalid input format")
                 print("Error: Invalid input format. Please use: operation number1 number2")
                 continue
-            
+
             operation, num1, num2 = parts
-            
+
             try:
                 num1 = float(num1)
                 num2 = float(num2)
@@ -215,7 +218,7 @@ def main():
                 logger.error("Invalid numbers entered")
                 print("Error: Please enter valid numbers")
                 continue
-            
+
             command = None
             if operation == 'add':
                 command = AddCommand(history_manager, num1, num2)
@@ -229,11 +232,11 @@ def main():
                 logger.error("Invalid operation")
                 print("Error: Invalid operation. Use add, subtract, multiply, or divide")
                 continue
-            
+
             result = command.execute()
             logger.info(f"User executed {operation} command with result: {result}")
             print(f"Result: {result}")
-            
+
         except Exception as e:
             logger.error(f"Error: {str(e)}")
             print(f"Error: {str(e)}")

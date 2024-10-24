@@ -8,7 +8,7 @@ class AddCommand(Command):
         self.num1 = num1
         self.num2 = num2
         self.result = None
-    
+
     def execute(self):
         self.result = self.num1 + self.num2
         self.facade.add_record('add', self.num1, self.num2, self.result)
@@ -20,7 +20,7 @@ class SubtractCommand(Command):
         self.num1 = num1
         self.num2 = num2
         self.result = None
-    
+
     def execute(self):
         self.result = self.num1 - self.num2
         self.facade.add_record('subtract', self.num1, self.num2, self.result)
@@ -32,7 +32,7 @@ class MultiplyCommand(Command):
         self.num1 = num1
         self.num2 = num2
         self.result = None
-    
+
     def execute(self):
         self.result = self.num1 * self.num2
         self.facade.add_record('multiply', self.num1, self.num2, self.result)
@@ -44,7 +44,7 @@ class DivideCommand(Command):
         self.num1 = num1
         self.num2 = num2
         self.result = None
-    
+
     def execute(self):
         if self.num2 == 0:
             return "Error: Division by zero"
@@ -56,7 +56,7 @@ class SaveHistoryCommand(Command):
     def __init__(self, facade, filename):
         self.facade = facade
         self.filename = filename
-    
+
     def execute(self):
         return self.facade.save_to_csv(self.filename)
 
@@ -64,20 +64,20 @@ class LoadHistoryCommand(Command):
     def __init__(self, facade, filename):
         self.facade = facade
         self.filename = filename
-    
+
     def execute(self):
         return self.facade.load_from_csv(self.filename)
 
 class ViewHistoryCommand(Command):
     def __init__(self, facade):
         self.facade = facade
-    
+
     def execute(self):
         return self.facade.view_data()
 
 class ClearHistoryCommand(Command):
     def __init__(self, facade):
         self.facade = facade
-    
+
     def execute(self):
         return self.facade.clear_data()
