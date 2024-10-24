@@ -1,9 +1,18 @@
+import os
+import logging
 import pandas as pd
 from datetime import datetime
 import json
-import os
 import sys
 import importlib
+
+# Configure logging
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
+LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
+LOG_FILE = os.getenv('LOG_FILE', None)
+
+logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, filename=LOG_FILE)
+logger = logging.getLogger(__name__)
 
 # History storage
 SAVED_HISTORY = """[{"timestamp": "2024-10-23 19:52:04.822577", "operation": "multiply", "num1": 4.0, "num2": 5.0, "result": 20.0}, {"timestamp": "2024-10-23 19:52:09.014594", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}]"""
@@ -39,11 +48,13 @@ class PluginManager:
 
     def load_plugins(self):
         """Load all plugins from the plugins directory"""
+        logger.info("Loading plugins from the plugins directory")
         # Ensure plugins directory exists
         if not os.path.exists('plugins'):
             os.makedirs('plugins')
             with open(os.path.join('plugins', '__init__.py'), 'w') as f:
                 pass
+            logger.info("Plugins directory created")
             return
 
         # Add plugins directory to Python path
@@ -59,9 +70,9 @@ class PluginManager:
                     module = importlib.import_module(module_name)
                     if hasattr(module, 'plugin_instance'):
                         self.plugins[module_name] = module.plugin_instance
-                        print(f"Loaded plugin: {module_name}")
+                        logger.info(f"Loaded plugin: {module_name}")
                 except Exception as e:
-                    print(f"Error loading plugin {module_name}: {str(e)}")
+                    logger.error(f"Error loading plugin {module_name}: {str(e)}")
 
     def list_plugins(self):
         """List all available plugins and their commands"""
@@ -80,17 +91,22 @@ class PluginManager:
     def execute_command(self, plugin_name, command, *args):
         """Execute a plugin command"""
         if plugin_name not in self.plugins:
+            logger.error(f"Plugin '{plugin_name}' not found")
             return f"Plugin '{plugin_name}' not found"
         
         plugin = self.plugins[plugin_name]
         commands = plugin.get_commands()
         
         if command not in commands:
+            logger.error(f"Command '{command}' not found in plugin '{plugin_name}'")
             return f"Command '{command}' not found in plugin '{plugin_name}'"
         
         try:
-            return commands[command](*args)
+            result = commands[command](*args)
+            logger.info(f"Executed command '{command}' in plugin '{plugin_name}' with result: {result}")
+            return result
         except Exception as e:
+            logger.error(f"Error executing command: {str(e)}")
             return f"Error executing command: {str(e)}"
 
 class CalculatorHistory:
@@ -106,6 +122,7 @@ class CalculatorHistory:
             'result': [result]
         })
         self.history = pd.concat([self.history, new_record], ignore_index=True)
+        logger.info(f"Added record to history: {operation} {num1} {num2} = {result}")
     
     def save_history(self):
         try:
@@ -122,8 +139,10 @@ class CalculatorHistory:
             )
             with open(__file__, 'w') as file:
                 file.write(new_content)
+            logger.info("History saved successfully")
             return "History saved successfully"
         except Exception as e:
+            logger.error(f"Error saving history: {str(e)}")
             return f"Error saving history: {str(e)}"
     
     def load_history(self):
@@ -131,18 +150,24 @@ class CalculatorHistory:
             history_data = json.loads(SAVED_HISTORY)
             if history_data:
                 self.history = pd.DataFrame(history_data)
+                logger.info("History loaded successfully")
                 return "History loaded successfully"
+            logger.info("No saved history found")
             return "No saved history found"
         except Exception as e:
+            logger.error(f"Error loading history: {str(e)}")
             return f"Error loading history: {str(e)}"
     
     def view_history(self):
         if len(self.history) == 0:
+            logger.info("No calculations in history")
             return "No calculations in history"
+        logger.info("Viewing history")
         return str(self.history)
     
     def clear_history(self):
         self.history = pd.DataFrame(columns=['timestamp', 'operation', 'num1', 'num2', 'result'])
+        logger.info("History cleared from memory")
         return "History cleared from memory"
     
     def delete_history(self):
@@ -156,11 +181,14 @@ class CalculatorHistory:
             with open(__file__, 'w') as file:
                 file.write(new_content)
             self.clear_history()
+            logger.info("History deleted successfully")
             return "History deleted successfully"
         except Exception as e:
+            logger.error(f"Error deleting history: {str(e)}")
             return f"Error deleting history: {str(e)}"
 
 def main():
+    logger.info("Enhanced Calculator REPL with Plugin System started")
     print("Enhanced Calculator REPL with Plugin System")
     print("Available commands:")
     print("  Calculations: add, subtract, multiply, divide")
@@ -175,44 +203,55 @@ def main():
     while True:
         try:
             user_input = input("> ").strip().lower()
+            logger.info(f"User input: {user_input}")
             
             if user_input == 'exit':
+                logger.info("User exited the calculator")
                 break
             
             if user_input == 'menu':
+                logger.info("User requested plugin menu")
                 print(plugin_manager.list_plugins())
                 continue
             
             if user_input.startswith('use_plugin '):
                 parts = user_input.split()
                 if len(parts) < 3:
+                    logger.warning("Invalid plugin command format")
                     print("Error: Invalid plugin command format. Use: use_plugin <plugin_name> <command> [args...]")
                     continue
                 plugin_name = parts[1]
                 command = parts[2]
                 args = parts[3:]
+                logger.info(f"User executed plugin command: {plugin_name} {command} {args}")
                 result = plugin_manager.execute_command(plugin_name, command, *args)
                 print(f"Result: {result}")
                 continue
             
             if user_input == 'save_history':
+                logger.info("User requested to save history")
                 print(history_manager.save_history())
                 continue
             elif user_input == 'load_history':
+                logger.info("User requested to load history")
                 print(history_manager.load_history())
                 continue
             elif user_input == 'view_history':
+                logger.info("User requested to view history")
                 print(history_manager.view_history())
                 continue
             elif user_input == 'clear_history':
+                logger.info("User requested to clear history")
                 print(history_manager.clear_history())
                 continue
             elif user_input == 'delete_history':
+                logger.info("User requested to delete history")
                 print(history_manager.delete_history())
                 continue
             
             parts = user_input.split()
             if len(parts) != 3:
+                logger.warning("Invalid input format")
                 print("Error: Invalid input format. Please use: operation number1 number2")
                 continue
             
@@ -222,6 +261,7 @@ def main():
                 num1 = float(num1)
                 num2 = float(num2)
             except ValueError:
+                logger.error("Invalid numbers entered")
                 print("Error: Please enter valid numbers")
                 continue
             
@@ -235,13 +275,16 @@ def main():
             elif operation == 'divide':
                 result = divide(num1, num2)
             else:
+                logger.error("Invalid operation")
                 print("Error: Invalid operation. Use add, subtract, multiply, or divide")
                 continue
             
             history_manager.add_record(operation, num1, num2, result)
+            logger.info(f"User executed {operation} command with result: {result}")
             print(f"Result: {result}")
             
         except Exception as e:
+            logger.error(f"Error: {str(e)}")
             print(f"Error: {str(e)}")
 
 if __name__ == "__main__":
