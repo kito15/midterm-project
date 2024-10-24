@@ -74,21 +74,47 @@ def test_scientific_error_handling():
     
     # Test power with invalid inputs
     result = calc.power('invalid', 2)
-    assert "Error" in result
+    assert "Error: Invalid numbers" in result
     result = calc.power(2, 'invalid')
+    assert "Error: Invalid numbers" in result
+    result = calc.power(None, 2)
     assert "Error" in result
     
     # Test sqrt with invalid input
     result = calc.sqrt('invalid')
-    assert "Error" in result
+    assert "Error: Invalid number" in result
     result = calc.sqrt(-1)
+    assert "Error: Cannot calculate square root of negative number" in result
+    result = calc.sqrt(None)
     assert "Error" in result
     
     # Test trig functions with invalid inputs
     result = calc.sin('invalid')
+    assert "Error: Invalid number" in result
+    result = calc.sin(None)
     assert "Error" in result
     result = calc.cos('invalid')
+    assert "Error: Invalid number" in result
+    result = calc.cos(None)
     assert "Error" in result
+
+def test_scientific_edge_cases():
+    from plugins.scientific import ScientificCalculator
+    calc = ScientificCalculator()
+    
+    # Test power with zero and one
+    assert calc.power(0, 5) == 0.0
+    assert calc.power(1, 1000) == 1.0
+    assert calc.power(2, 0) == 1.0
+    
+    # Test sqrt with zero and one
+    assert calc.sqrt(0) == 0.0
+    assert calc.sqrt(1) == 1.0
+    
+    # Test trig functions with special angles
+    import math
+    assert abs(calc.sin(math.pi)) < 1e-10  # sin(π) ≈ 0
+    assert abs(calc.cos(math.pi) + 1) < 1e-10  # cos(π) ≈ -1
 
 def test_plugin_logging(caplog):
     import logging
