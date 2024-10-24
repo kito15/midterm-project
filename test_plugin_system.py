@@ -1,10 +1,9 @@
 """Test module for the plugin system of the calculator application."""
 
-import pytest
+import logging
+import math
 from calculator import PluginManager
 from plugins.scientific import ScientificCalculator
-import math
-import logging
 
 def test_plugin_manager_initialization(plugin_manager):
     """Test if plugin manager initializes correctly."""
@@ -89,7 +88,6 @@ def test_scientific_error_handling():
     assert "Error: Invalid numbers" in result
     result = calc.power(None, 2)
     assert "Error" in result
-    
     # Test sqrt with invalid input
     result = calc.sqrt('invalid')
     assert "Error: Invalid number" in result
@@ -97,7 +95,6 @@ def test_scientific_error_handling():
     assert "Error: Cannot calculate square root of negative number" in result
     result = calc.sqrt(None)
     assert "Error" in result
-    
     # Test trig functions with invalid inputs
     result = calc.sin('invalid')
     assert "Error: Invalid number" in result
@@ -107,7 +104,6 @@ def test_scientific_error_handling():
     assert "Error: Invalid number" in result
     result = calc.cos(None)
     assert "Error" in result
-
 def test_scientific_edge_cases():
     """Test edge cases in scientific calculator."""
     calc = ScientificCalculator()
@@ -119,7 +115,6 @@ def test_scientific_edge_cases():
     # Test sqrt with zero and one
     assert calc.sqrt(0) == 0.0
     assert calc.sqrt(1) == 1.0
-    
     # Test trig functions with special angles
     assert abs(calc.sin(math.pi)) < 1e-10  # sin(π) ≈ 0
     assert abs(calc.cos(math.pi) + 1) < 1e-10  # cos(π) ≈ -1
@@ -128,7 +123,6 @@ def test_plugin_logging(caplog):
     """Test logging functionality of plugins."""
     # Set log level
     caplog.set_level(logging.INFO)
-    
     # Execute operations that generate logs
     calc = ScientificCalculator()
     calc.get_description()
@@ -137,7 +131,6 @@ def test_plugin_logging(caplog):
     calc.sqrt(16)
     calc.sin(0)
     calc.cos(0)
-    
     # Verify log messages were created
     assert len(caplog.records) > 0
     assert any(record.levelname == 'INFO' for record in caplog.records)
