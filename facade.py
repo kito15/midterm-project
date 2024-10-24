@@ -1,5 +1,6 @@
-import pandas as pd
+"""Facade module for data management operations."""
 import logging
+import pandas as pd
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -17,12 +18,12 @@ class DataFacade:
             'result': [result]
         })
         self.data = pd.concat([self.data, new_record], ignore_index=True)
-        logger.info(f"Added record to data: {operation} {num1} {num2} = {result}")
+        logger.info("Added record to data: %s %s %s = %s", operation, num1, num2, result)
     
     def save_to_csv(self, filename):
         try:
             self.data.to_csv(filename, index=False)
-            logger.info(f"Data saved to {filename} successfully")
+            logger.info("Data saved to %s successfully", filename)
             return f"Data saved to {filename} successfully"
         except Exception as e:
             logger.error(f"Error saving data to {filename}: {str(e)}")

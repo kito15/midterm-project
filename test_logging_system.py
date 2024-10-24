@@ -1,7 +1,8 @@
+"""Test module for logging system functionality."""
+import os
 import pytest
 from singleton import Logger
 from strategy import FileLoggerStrategy, ConsoleLoggerStrategy
-import os
 
 def test_logger_singleton():
     logger1 = Logger()

@@ -1,7 +1,6 @@
-import pandas as pd
-from datetime import datetime
+"""Singleton module implementing logger and history manager."""
 import logging
-from factory import DataFacade  # Change this line
+from factory import DataFacade
 
 class SingletonMeta(type):
     _instances = {}

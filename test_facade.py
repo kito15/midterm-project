@@ -1,7 +1,7 @@
+"""Test module for data facade functionality."""
+import os
 import pytest
 from factory import DataFacade
-import pandas as pd
-import os
 
 @pytest.fixture
 def data_facade():

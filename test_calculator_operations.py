@@ -1,4 +1,4 @@
-import pytest
+"""Test module for calculator operations."""
 from calculator import add, subtract, multiply, divide
 from command import (
     AddCommand, SubtractCommand, MultiplyCommand, DivideCommand,

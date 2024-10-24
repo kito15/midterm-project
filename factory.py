@@ -1,5 +1,6 @@
-import pandas as pd
+"""Factory module for creating data management objects."""
 import logging
+import pandas as pd
 
 # Configure logging
 logger = logging.getLogger(__name__)

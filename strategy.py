@@ -1,3 +1,4 @@
+"""Strategy module implementing various logging and history strategies."""
 import pandas as pd
 
 class HistoryStrategy:
@@ -23,7 +24,7 @@ class FileLoggerStrategy(LoggerStrategy):
         self.filename = filename
 
     def log(self, message, level):
-        with open(self.filename, 'a') as file:
+        with open(self.filename, 'a', encoding='utf-8') as file:
             file.write(f"{level}: {message}\n")
 
 class ConsoleLoggerStrategy(LoggerStrategy):
