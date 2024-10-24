@@ -5,9 +5,9 @@ from datetime import datetime
 import json
 import sys
 import importlib
-from .command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
-from .singleton import Logger, HistoryManager
-from .strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
+from calculator.command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
+from calculator.singleton import Logger, HistoryManager
+from calculator.strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
 # Configure logging
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -114,8 +114,8 @@ class PluginManager:
 
 def main():
     logger.info("Enhanced Calculator REPL with Plugin System started")
-    print("Enhanced Calculator REPL with Plugin System")
-    print("Available commands:")
+    print("Hey there! Welcome to the Enhanced Calculator REPL with Plugin System")
+    print("Here are the commands you can use:")
     print("  Calculations: add, subtract, multiply, divide")
     print("  History: save_history, load_history, view_history, clear_history, delete_history, save_history_to_csv <filename>, load_history_from_csv <filename>")
     print("  Plugins: menu, use_plugin <plugin_name> <command> [args...]")
