@@ -1,13 +1,18 @@
+"""Test module for the plugin system of the calculator application."""
+
 import pytest
 from calculator import PluginManager
-import os
-import sys
+from plugins.scientific import ScientificCalculator
+import math
+import logging
 
 def test_plugin_manager_initialization(plugin_manager):
+    """Test if plugin manager initializes correctly."""
     assert isinstance(plugin_manager, PluginManager)
     assert hasattr(plugin_manager, 'plugins')
 
 def test_plugin_loading(plugin_manager):
+    """Test if plugins are loaded correctly."""
     # Scientific calculator plugin should be loaded
     assert 'scientific' in plugin_manager.plugins
     plugin = plugin_manager.plugins['scientific']
@@ -15,6 +20,7 @@ def test_plugin_loading(plugin_manager):
     assert hasattr(plugin, 'get_description')
 
 def test_plugin_commands(plugin_manager):
+    """Test if plugin commands are available."""
     scientific = plugin_manager.plugins['scientific']
     commands = scientific.get_commands()
     assert 'power' in commands
@@ -23,6 +29,7 @@ def test_plugin_commands(plugin_manager):
     assert 'cos' in commands
 
 def test_plugin_command_execution(plugin_manager):
+    """Test if plugin commands execute correctly."""
     result = plugin_manager.execute_command('scientific', 'power', 2, 3)
     assert result == 8.0
 
@@ -30,6 +37,7 @@ def test_plugin_command_execution(plugin_manager):
     assert result == 4.0
 
 def test_invalid_plugin_commands(plugin_manager):
+    """Test handling of invalid plugin commands."""
     result = plugin_manager.execute_command('nonexistent', 'command', 1)
     assert "not found" in result
 
@@ -37,6 +45,7 @@ def test_invalid_plugin_commands(plugin_manager):
     assert "not found" in result
 
 def test_plugin_error_handling(plugin_manager):
+    """Test error handling in plugin execution."""
     result = plugin_manager.execute_command('scientific', 'sqrt', -1)
     assert "Error" in result
 
@@ -44,6 +53,7 @@ def test_plugin_error_handling(plugin_manager):
     assert "Error" in result
 
 def test_scientific_trig_functions(plugin_manager):
+    """Test trigonometric functions of scientific calculator."""
     # Test sin
     result = plugin_manager.execute_command('scientific', 'sin', 0)
     assert abs(result) < 0.0001  # sin(0) = 0
@@ -53,6 +63,7 @@ def test_scientific_trig_functions(plugin_manager):
     assert abs(result - 1) < 0.0001  # cos(0) = 1
 
 def test_scientific_error_cases(plugin_manager):
+    """Test error cases in scientific calculator functions."""
     # Test invalid input for sin
     result = plugin_manager.execute_command('scientific', 'sin', 'invalid')
     assert "Error" in result
@@ -62,16 +73,15 @@ def test_scientific_error_cases(plugin_manager):
     assert "Error" in result
 
 def test_plugin_description():
-    from plugins.scientific import ScientificCalculator
+    """Test plugin description functionality."""
     calc = ScientificCalculator()
     desc = calc.get_description()
     assert isinstance(desc, str)
     assert len(desc) > 0
 
 def test_scientific_error_handling():
-    from plugins.scientific import ScientificCalculator
+    """Test error handling in scientific calculator."""
     calc = ScientificCalculator()
-    
     # Test power with invalid inputs
     result = calc.power('invalid', 2)
     assert "Error: Invalid numbers" in result
@@ -99,9 +109,8 @@ def test_scientific_error_handling():
     assert "Error" in result
 
 def test_scientific_edge_cases():
-    from plugins.scientific import ScientificCalculator
+    """Test edge cases in scientific calculator."""
     calc = ScientificCalculator()
-    
     # Test power with zero and one
     assert calc.power(0, 5) == 0.0
     assert calc.power(1, 1000) == 1.0
@@ -112,14 +121,11 @@ def test_scientific_edge_cases():
     assert calc.sqrt(1) == 1.0
     
     # Test trig functions with special angles
-    import math
     assert abs(calc.sin(math.pi)) < 1e-10  # sin(π) ≈ 0
     assert abs(calc.cos(math.pi) + 1) < 1e-10  # cos(π) ≈ -1
 
 def test_plugin_logging(caplog):
-    import logging
-    from plugins.scientific import ScientificCalculator
-    
+    """Test logging functionality of plugins."""
     # Set log level
     caplog.set_level(logging.INFO)
     
