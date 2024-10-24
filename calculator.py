@@ -5,6 +5,9 @@ from datetime import datetime
 import json
 import sys
 import importlib
+from .command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
+from .singleton import Logger, HistoryManager
+from .strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
 # Configure logging
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
@@ -12,7 +15,7 @@ LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 LOG_FILE = os.getenv('LOG_FILE', None)
 
 logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, filename=LOG_FILE)
-logger = logging.getLogger(__name__)
+logger = Logger.get_logger()
 
 # History storage
 SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""
@@ -109,68 +112,6 @@ class PluginManager:
             logger.error(f"Error executing command: {str(e)}")
             return f"Error executing command: {str(e)}"
 
-class CalculatorHistory:
-    def __init__(self):
-        self.history = pd.DataFrame(columns=['timestamp', 'operation', 'num1', 'num2', 'result'])
-        
-    def add_record(self, operation, num1, num2, result):
-        new_record = pd.DataFrame({
-            'timestamp': [str(datetime.now())],
-            'operation': [operation],
-            'num1': [num1],
-            'num2': [num2],
-            'result': [result]
-        })
-        self.history = pd.concat([self.history, new_record], ignore_index=True)
-        logger.info(f"Added record to history: {operation} {num1} {num2} = {result}")
-    
-    def save_history_to_csv(self, filename):
-        try:
-            self.history.to_csv(filename, index=False)
-            logger.info(f"History saved to {filename} successfully")
-            return f"History saved to {filename} successfully"
-        except Exception as e:
-            logger.error(f"Error saving history to {filename}: {str(e)}")
-            return f"Error saving history to {filename}: {str(e)}"
-    
-    def load_history_from_csv(self, filename):
-        try:
-            self.history = pd.read_csv(filename)
-            logger.info(f"History loaded from {filename} successfully")
-            return f"History loaded from {filename} successfully"
-        except Exception as e:
-            logger.error(f"Error loading history from {filename}: {str(e)}")
-            return f"Error loading history from {filename}: {str(e)}"
-    
-    def view_history(self):
-        if len(self.history) == 0:
-            logger.info("No calculations in history")
-            return "No calculations in history"
-        logger.info("Viewing history")
-        return str(self.history)
-    
-    def clear_history(self):
-        self.history = pd.DataFrame(columns=['timestamp', 'operation', 'num1', 'num2', 'result'])
-        logger.info("History cleared from memory")
-        return "History cleared from memory"
-    
-    def delete_history(self):
-        try:
-            with open(__file__, 'r') as file:
-                content = file.read()
-            new_content = content.replace(
-                f'SAVED_HISTORY = """{SAVED_HISTORY}"""',
-                'SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""'
-            )
-            with open(__file__, 'w') as file:
-                file.write(new_content)
-            self.clear_history()
-            logger.info("History deleted successfully")
-            return "History deleted successfully"
-        except Exception as e:
-            logger.error(f"Error deleting history: {str(e)}")
-            return f"Error deleting history: {str(e)}"
-
 def main():
     logger.info("Enhanced Calculator REPL with Plugin System started")
     print("Enhanced Calculator REPL with Plugin System")
@@ -181,7 +122,7 @@ def main():
     print("Format for calculations: operation number1 number2")
     print("Type 'exit' to quit")
     
-    history_manager = CalculatorHistory()
+    history_manager = HistoryManager()
     plugin_manager = PluginManager()
     
     while True:
@@ -214,23 +155,27 @@ def main():
             
             if user_input == 'save_history':
                 logger.info("User requested to save history")
-                print(history_manager.save_history_to_csv('history.csv'))
+                command = SaveHistoryCommand(history_manager, 'history.csv')
+                print(command.execute())
                 continue
             elif user_input == 'load_history':
                 logger.info("User requested to load history")
-                print(history_manager.load_history_from_csv('history.csv'))
+                command = LoadHistoryCommand(history_manager, 'history.csv')
+                print(command.execute())
                 continue
             elif user_input == 'view_history':
                 logger.info("User requested to view history")
-                print(history_manager.view_history())
+                command = ViewHistoryCommand(history_manager)
+                print(command.execute())
                 continue
             elif user_input == 'clear_history':
                 logger.info("User requested to clear history")
-                print(history_manager.clear_history())
+                command = ClearHistoryCommand(history_manager)
+                print(command.execute())
                 continue
             elif user_input == 'delete_history':
                 logger.info("User requested to delete history")
-                print(history_manager.delete_history())
+                print(history_manager.clear_data())
                 continue
             elif user_input.startswith('save_history_to_csv '):
                 parts = user_input.split()
@@ -240,7 +185,8 @@ def main():
                     continue
                 filename = parts[1]
                 logger.info(f"User requested to save history to CSV: {filename}")
-                print(history_manager.save_history_to_csv(filename))
+                command = SaveHistoryCommand(history_manager, filename)
+                print(command.execute())
                 continue
             elif user_input.startswith('load_history_from_csv '):
                 parts = user_input.split()
@@ -250,7 +196,8 @@ def main():
                     continue
                 filename = parts[1]
                 logger.info(f"User requested to load history from CSV: {filename}")
-                print(history_manager.load_history_from_csv(filename))
+                command = LoadHistoryCommand(history_manager, filename)
+                print(command.execute())
                 continue
             
             parts = user_input.split()
@@ -269,21 +216,21 @@ def main():
                 print("Error: Please enter valid numbers")
                 continue
             
-            result = None
+            command = None
             if operation == 'add':
-                result = add(num1, num2)
+                command = AddCommand(history_manager, num1, num2)
             elif operation == 'subtract':
-                result = subtract(num1, num2)
+                command = SubtractCommand(history_manager, num1, num2)
             elif operation == 'multiply':
-                result = multiply(num1, num2)
+                command = MultiplyCommand(history_manager, num1, num2)
             elif operation == 'divide':
-                result = divide(num1, num2)
+                command = DivideCommand(history_manager, num1, num2)
             else:
                 logger.error("Invalid operation")
                 print("Error: Invalid operation. Use add, subtract, multiply, or divide")
                 continue
             
-            history_manager.add_record(operation, num1, num2, result)
+            result = command.execute()
             logger.info(f"User executed {operation} command with result: {result}")
             print(f"Result: {result}")
             
