@@ -117,7 +117,7 @@ class PluginManager:
 
 def main():
     logger.info("Enhanced Calculator REPL with Plugin System started")
-    print("Hey there! Welcome to the Enhanced Calculator REPL with Plugin System 🚀")
+    print("Hey there! Welcome to the Enhanced Calculator REPL with Plugin System")
     print("Here are the commands you can use:")
     print("  Calculations: add, subtract, multiply, divide")
     print("  History: save_history, load_history, view_history, clear_history, delete_history, save_history_to_csv <filename>, load_history_from_csv <filename>")
@@ -130,9 +130,7 @@ def main():
 
     while True:
         try:
-            user_input = input("> ").strip()
-            if not user_input:
-                continue
+            user_input = input("> ").strip().lower()
             logger.info(f"User input: {user_input}")
 
             if user_input == 'exit':
@@ -205,30 +203,12 @@ def main():
                 print(command.execute())
                 continue
 
-            if user_input.startswith('use_plugin '):
-                parts = user_input.split()
-                if len(parts) < 3:
-                    logger.warning("Invalid plugin command format")
-                    print("Error: Invalid plugin command format. Use: use_plugin <plugin_name> <command> [args...]")
-                    continue
-                plugin_name = parts[1]
-                command = parts[2]
-                args = parts[3:]
-                try:
-                    args = [float(arg) for arg in args]
-                    result = plugin_manager.execute_command(plugin_name, command, *args)
-                    print(f"Result: {result}")
-                except ValueError:
-                    result = plugin_manager.execute_command(plugin_name, command, *args)
-                    print(f"Result: {result}")
+            parts = user_input.split()
+            if len(parts) != 3:
+                logger.warning("Invalid input format")
+                print("Error: Invalid input format. Please use: operation number1 number2")
                 continue
 
-            parts = user_input.split()
-            if len(parts) != 3 or parts[0] not in ['add', 'subtract', 'multiply', 'divide']:
-                logger.error("Invalid input format")
-                print("Error: Invalid input format. Use: operation number1 number2")
-                continue
-                
             operation, num1, num2 = parts
 
             try:

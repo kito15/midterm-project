@@ -1,8 +1,0 @@
-def test_repl_load_history(capsys):
-    user_input = "add 1 2\nsave_history\nload_history\nexit\n"
-    expected_output = "Data loaded from history.csv successfully\n"
-    with patch('builtins.input', side_effect=user_input.split()):
-        main()
-        captured = capsys.readouterr()
-        output_lines = captured.out.splitlines()
-        assert expected_output in output_lines

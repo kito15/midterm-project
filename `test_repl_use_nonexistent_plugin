@@ -1,8 +1,0 @@
-def test_repl_use_nonexistent_plugin(capsys):
-    user_input = "use_plugin nonexistent_plugin power 2 3\nexit\n"
-    expected_output = "Plugin 'nonexistent_plugin' not found\n"
-    with patch('builtins.input', side_effect=user_input.split()):
-        main()
-        captured = capsys.readouterr()
-        output_lines = captured.out.splitlines()
-        assert expected_output in output_lines

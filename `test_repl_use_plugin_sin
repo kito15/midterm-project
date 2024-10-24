@@ -1,8 +1,0 @@
-def test_repl_use_plugin_sin(capsys):
-    user_input = "use_plugin scientific sin 0\nexit\n"
-    expected_output = "Result: 0.0\n"
-    with patch('builtins.input', side_effect=user_input.split()):
-        main()
-        captured = capsys.readouterr()
-        output_lines = captured.out.splitlines()
-        assert expected_output in output_lines
