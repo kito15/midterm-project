@@ -5,9 +5,9 @@ from datetime import datetime
 import json
 import sys
 import importlib
-from calculator.command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
-from calculator.singleton import Logger, HistoryManager
-from calculator.strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
+from .command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
+from .singleton import Logger, HistoryManager
+from .strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

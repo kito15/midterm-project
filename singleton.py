@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import logging
-from calculator.factory import DataFacade
+from .factory import DataFacade
 
 class SingletonMeta(type):
     _instances = {}
