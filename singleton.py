@@ -36,3 +36,6 @@ class HistoryManager(metaclass=SingletonMeta):
 
     def clear_data(self):
         return self.facade.clear_data()
+
+# Create an instance of Logger
+logger_instance = Logger()

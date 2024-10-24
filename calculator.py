@@ -6,7 +6,7 @@ import json
 import sys
 import importlib
 from command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
-from singleton import Logger, HistoryManager
+from singleton import logger_instance, HistoryManager
 from strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
 # Add the parent directory to the Python path
@@ -18,7 +18,7 @@ LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
 LOG_FILE = os.getenv('LOG_FILE', None)
 
 logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, filename=LOG_FILE)
-logger = Logger.get_logger()
+logger = logger_instance.get_logger()
 
 # History storage
 SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""
