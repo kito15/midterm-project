@@ -34,7 +34,10 @@ class HistoryManager(metaclass=SingletonMeta):
         return self.facade.load_from_csv(filename)
 
     def view_data(self):
-        return self.facade.view_data()
+        data = self.facade.view_data()
+        if isinstance(data, str):
+            return data
+        return data.to_string() if not data.empty else "No data available"
 
     def clear_data(self):
         self.data = []

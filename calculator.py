@@ -213,15 +213,21 @@ def main():
                     continue
                 plugin_name = parts[1]
                 command = parts[2]
-                args = [float(arg) for arg in parts[3:]]
-                result = plugin_manager.execute_command(plugin_name, command, *args)
-                print(f"Result: {result}")
+                try:
+                    args = [float(arg) for arg in parts[3:]]
+                    result = plugin_manager.execute_command(plugin_name, command, *args)
+                    print(f"Result: {result}")
+                except ValueError:
+                    logger.error("Invalid numeric arguments for plugin command")
+                    print("Error: Invalid numeric arguments")
                 continue
 
             parts = user_input.split()
-            if len(parts) == 3 and parts[0] in ['add', 'subtract', 'multiply', 'divide']:
-                operation, num1, num2 = parts
-
+            if len(parts) != 3 or parts[0] not in ['add', 'subtract', 'multiply', 'divide']:
+                logger.error("Invalid input format")
+                print("Error: Invalid input format. Use: operation number1 number2")
+                continue
+                
             operation, num1, num2 = parts
 
             try:
