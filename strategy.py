@@ -1,3 +1,5 @@
+import pandas as pd
+
 class HistoryStrategy:
     def save(self, data, filename):
         raise NotImplementedError
