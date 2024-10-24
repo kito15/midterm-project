@@ -119,7 +119,7 @@ def test_repl_division(capsys):
 def test_repl_division_by_zero(capsys):
     user_input = "divide 10 0\nexit\n"
     expected_output = "Result: Error: Division by zero\n"
-    with patch('builtins.input', side_effect=user_input.split()):
+    with patch('builtins.input', side_effect=user_input.splitlines()):
         main()
         captured = capsys.readouterr()
         assert expected_output in captured.out
