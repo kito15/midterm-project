@@ -1,0 +1,8 @@
+def test_repl_division(capsys):
+    user_input = "divide 10 2\nexit\n"
+    expected_output = "Result: 5.0\n"
+    with patch('builtins.input', side_effect=user_input.split()):
+        main()
+        captured = capsys.readouterr()
+        output_lines = captured.out.splitlines()
+        assert expected_output in output_lines

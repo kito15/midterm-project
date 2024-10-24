@@ -1,0 +1,8 @@
+def test_repl_use_plugin_invalid_command(capsys):
+    user_input = "use_plugin scientific invalid_command\nexit\n"
+    expected_output = "Command 'invalid_command' not found in plugin 'scientific'\n"
+    with patch('builtins.input', side_effect=user_input.split()):
+        main()
+        captured = capsys.readouterr()
+        output_lines = captured.out.splitlines()
+        assert expected_output in output_lines

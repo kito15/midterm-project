@@ -1,0 +1,8 @@
+def test_repl_use_plugin_cos(capsys):
+    user_input = "use_plugin scientific cos 0\nexit\n"
+    expected_output = "Result: 1.0\n"
+    with patch('builtins.input', side_effect=user_input.split()):
+        main()
+        captured = capsys.readouterr()
+        output_lines = captured.out.splitlines()
+        assert expected_output in output_lines
