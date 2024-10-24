@@ -5,9 +5,9 @@ from datetime import datetime
 import json
 import sys
 import importlib
-from .command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
-from .singleton import Logger, HistoryManager
-from .strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
+from command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
+from singleton import Logger, HistoryManager
+from strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -73,7 +73,7 @@ class PluginManager:
             if file.endswith('.py') and file != '__init__.py':
                 module_name = file[:-3]
                 try:
-                    module = importlib.import_module(module_name)
+                    module = importlib.import_module(f'plugins.{module_name}')
                     if hasattr(module, 'plugin_instance'):
                         self.plugins[module_name] = module.plugin_instance
                         logger.info(f"Loaded plugin: {module_name}")
