@@ -146,7 +146,7 @@ def main():
                 parts = user_input.split()
                 if len(parts) < 3:
                     logger.warning("Invalid plugin command format")
-                    print("Error: Invalid plugin command format. Use: use_plugin <plugin_name> <command> [args...]")
+                    print("Error: Invalid plugin command format")
                     continue
                 plugin_name = parts[1]
                 command = parts[2]
@@ -203,6 +203,15 @@ def main():
                 print(command.execute())
                 continue
 
+            # Check for save/load history commands first
+            if user_input.startswith('save_history_to_csv') or user_input.startswith('load_history_from_csv'):
+                parts = user_input.split()
+                if len(parts) != 2:
+                    logger.warning(f"Invalid {parts[0]} command format")
+                    print(f"Error: Invalid {parts[0]} command format. Use: {parts[0]} <filename>")
+                    continue
+
+            # Handle regular calculator operations
             parts = user_input.split()
             if len(parts) != 3:
                 logger.warning("Invalid input format")
