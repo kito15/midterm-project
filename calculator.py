@@ -130,7 +130,10 @@ def main():
 
     while True:
         try:
-            user_input = input("> ").strip().lower()
+            user_input = input("> ").strip()
+            if not user_input:
+                continue
+            user_input = user_input.lower()
             logger.info(f"User input: {user_input}")
 
             if user_input == 'exit':
