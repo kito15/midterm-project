@@ -5,11 +5,13 @@ from factory import DataFacade
 
 @pytest.fixture
 def data_facade():
+    """Fixture to provide a DataFacade instance with cleared data."""
     facade = DataFacade()
     facade.clear_data()
     return facade
 
 def test_add_record(data_facade):
+    """Test adding a record to the data facade."""
     data_facade.add_record('add', 2, 3, 5)
     data = data_facade.view_data()
     assert 'add' in data
@@ -18,6 +20,7 @@ def test_add_record(data_facade):
     assert '5' in data
 
 def test_save_load_csv(data_facade, tmp_path):
+    """Test saving and loading data from a CSV file."""
     # Add some test data
     data_facade.add_record('add', 2, 3, 5)
     data_facade.add_record('multiply', 4, 5, 20)
@@ -40,6 +43,7 @@ def test_save_load_csv(data_facade, tmp_path):
     assert 'multiply' in data
 
 def test_clear_data(data_facade):
+    """Test clearing data from the data facade."""
     data_facade.add_record('add', 2, 3, 5)
     assert "add" in data_facade.view_data()
     
@@ -48,6 +52,7 @@ def test_clear_data(data_facade):
     assert data_facade.view_data() == "No data available"
 
 def test_invalid_file_operations(data_facade):
+    """Test invalid file operations."""
     result = data_facade.load_from_csv("nonexistent.csv")
     assert "Error" in result
 
@@ -55,6 +60,7 @@ def test_invalid_file_operations(data_facade):
     assert "Error" in result
 
 def test_empty_data_operations(data_facade):
+    """Test operations on empty data."""
     # Test operations on empty data
     assert data_facade.view_data() == "No data available"
     
@@ -68,6 +74,7 @@ def test_empty_data_operations(data_facade):
     assert "successfully" in result
 
 def test_data_validation(data_facade):
+    """Test data validation with invalid data types."""
     # Test with invalid data types
     data_facade.add_record(None, None, None, None)
     data = data_facade.view_data()
@@ -79,6 +86,7 @@ def test_data_validation(data_facade):
     assert 'not_number' in data
 
 def test_concurrent_operations(data_facade):
+    """Test multiple operations in sequence."""
     # Test multiple operations in sequence
     data_facade.add_record('add', 1, 2, 3)
     data_facade.add_record('multiply', 2, 3, 6)
@@ -91,11 +99,11 @@ def test_concurrent_operations(data_facade):
     assert 'multiply' in data
     
     # Clean up test file
-    import os
     if os.path.exists('test1.csv'):
         os.remove('test1.csv')
 
 def test_empty_file_operations(data_facade):
+    """Test operations with non-existent files."""
     # Test operations with non-existent files
     result = data_facade.load_from_csv('nonexistent.csv')
     assert 'Error' in result
@@ -105,6 +113,7 @@ def test_empty_file_operations(data_facade):
     assert 'Error' in result
 
 def test_data_operations_with_empty_dataframe(data_facade):
+    """Test data operations with an empty DataFrame."""
     # Test view_data with empty DataFrame
     data_facade.clear_data()
     assert data_facade.view_data() == "No data available"
@@ -114,11 +123,11 @@ def test_data_operations_with_empty_dataframe(data_facade):
     assert 'successfully' in result
     
     # Clean up test file
-    import os
     if os.path.exists('empty.csv'):
         os.remove('empty.csv')
 
 def test_multiple_records(data_facade):
+    """Test adding multiple records and verifying them."""
     # Add multiple records and verify
     operations = [
         ('add', 1, 2, 3),
