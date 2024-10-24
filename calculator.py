@@ -213,13 +213,14 @@ def main():
                     continue
                 plugin_name = parts[1]
                 command = parts[2]
+                args = parts[3:]
                 try:
-                    args = [float(arg) for arg in parts[3:]]
+                    args = [float(arg) for arg in args]
                     result = plugin_manager.execute_command(plugin_name, command, *args)
                     print(f"Result: {result}")
                 except ValueError:
-                    logger.error("Invalid numeric arguments for plugin command")
-                    print("Error: Invalid numeric arguments")
+                    result = plugin_manager.execute_command(plugin_name, command, *args)
+                    print(f"Result: {result}")
                 continue
 
             parts = user_input.split()

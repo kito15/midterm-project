@@ -127,7 +127,7 @@ def test_repl_division_by_zero(capsys):
 def test_repl_save_history(capsys):
     user_input = "add 1 2\nsave_history\nexit\n"
     expected_output = "Data saved to history.csv successfully\n"
-    with patch('builtins.input', side_effect=user_input.split()):
+    with patch('builtins.input', side_effect=user_input.splitlines()):
         main()
         captured = capsys.readouterr()
         assert expected_output in captured.out
