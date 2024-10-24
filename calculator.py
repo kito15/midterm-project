@@ -15,7 +15,7 @@ logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT, filename=LOG_FILE)
 logger = logging.getLogger(__name__)
 
 # History storage
-SAVED_HISTORY = """[{"timestamp": "2024-10-23 19:52:04.822577", "operation": "multiply", "num1": 4.0, "num2": 5.0, "result": 20.0}, {"timestamp": "2024-10-23 19:52:09.014594", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}]"""
+SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""
 
 class PluginInterface:
     """Base interface that all calculator plugins must implement"""
@@ -131,7 +131,7 @@ class CalculatorHistory:
                 content = file.read()
             new_history = json.dumps(history_data)
             new_content = content.replace(
-                'SAVED_HISTORY = """[{"timestamp": "2024-10-23 19:52:04.822577", "operation": "multiply", "num1": 4.0, "num2": 5.0, "result": 20.0}, {"timestamp": "2024-10-23 19:52:09.014594", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}]"""',
+                'SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""',
                 f'SAVED_HISTORY = """{new_history}"""'
             ).replace(
                 f'SAVED_HISTORY = """{SAVED_HISTORY}"""',
@@ -176,7 +176,7 @@ class CalculatorHistory:
                 content = file.read()
             new_content = content.replace(
                 f'SAVED_HISTORY = """{SAVED_HISTORY}"""',
-                'SAVED_HISTORY = """[{"timestamp": "2024-10-23 19:52:04.822577", "operation": "multiply", "num1": 4.0, "num2": 5.0, "result": 20.0}, {"timestamp": "2024-10-23 19:52:09.014594", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}]"""'
+                'SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""'
             )
             with open(__file__, 'w') as file:
                 file.write(new_content)
