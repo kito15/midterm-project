@@ -31,11 +31,14 @@ class ConsoleLoggerStrategy(LoggerStrategy):
         print(f"{level}: {message}")
 
 class Logger:
-    def __init__(self, strategy):
-        self.strategy = strategy
+    def __init__(self):
+        self.strategy = None
 
     def set_strategy(self, strategy):
         self.strategy = strategy
 
     def log(self, message, level):
-        self.strategy.log(message, level)
+        if self.strategy:
+            self.strategy.log(message, level)
+        else:
+            print(f"{level}: {message}")  # Default console logging

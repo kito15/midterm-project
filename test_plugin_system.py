@@ -42,3 +42,28 @@ def test_plugin_error_handling(plugin_manager):
 
     result = plugin_manager.execute_command('scientific', 'power', 'invalid', 2)
     assert "Error" in result
+
+def test_scientific_trig_functions(plugin_manager):
+    # Test sin
+    result = plugin_manager.execute_command('scientific', 'sin', 0)
+    assert abs(result) < 0.0001  # sin(0) = 0
+
+    # Test cos
+    result = plugin_manager.execute_command('scientific', 'cos', 0)
+    assert abs(result - 1) < 0.0001  # cos(0) = 1
+
+def test_scientific_error_cases(plugin_manager):
+    # Test invalid input for sin
+    result = plugin_manager.execute_command('scientific', 'sin', 'invalid')
+    assert "Error" in result
+
+    # Test invalid input for cos
+    result = plugin_manager.execute_command('scientific', 'cos', 'invalid')
+    assert "Error" in result
+
+def test_plugin_description():
+    from plugins.scientific import ScientificCalculator
+    calc = ScientificCalculator()
+    desc = calc.get_description()
+    assert isinstance(desc, str)
+    assert len(desc) > 0
