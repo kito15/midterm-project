@@ -103,7 +103,7 @@ def test_repl_subtraction(capsys):
 def test_repl_multiplication(capsys):
     user_input = "multiply 4 3\nexit\n"
     expected_output = "Result: 12.0\n"
-    with patch('builtins.input', side_effect=user_input.split()):
+    with patch('builtins.input', side_effect=user_input.splitlines()):
         main()
         captured = capsys.readouterr()
         assert expected_output in captured.out
@@ -111,7 +111,7 @@ def test_repl_multiplication(capsys):
 def test_repl_division(capsys):
     user_input = "divide 10 2\nexit\n"
     expected_output = "Result: 5.0\n"
-    with patch('builtins.input', side_effect=user_input.split()):
+    with patch('builtins.input', side_effect=user_input.splitlines()):
         main()
         captured = capsys.readouterr()
         assert expected_output in captured.out
