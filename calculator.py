@@ -117,7 +117,7 @@ class PluginManager:
 
 def main():
     logger.info("Enhanced Calculator REPL with Plugin System started")
-    print("Hey there! Welcome to the Enhanced Calculator REPL with Plugin System")
+    print("Hey there! Welcome to the Enhanced Calculator REPL with Plugin System 🚀")
     print("Here are the commands you can use:")
     print("  Calculations: add, subtract, multiply, divide")
     print("  History: save_history, load_history, view_history, clear_history, delete_history, save_history_to_csv <filename>, load_history_from_csv <filename>")
