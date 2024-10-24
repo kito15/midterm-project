@@ -13,7 +13,17 @@ class SingletonMeta(type):
 
 class Logger(metaclass=SingletonMeta):
     def __init__(self):
+        self.strategy = None
         self.logger = logging.getLogger(__name__)
+
+    def set_strategy(self, strategy):
+        self.strategy = strategy
+
+    def log(self, message, level):
+        if self.strategy:
+            self.strategy.log(message, level)
+        else:
+            self.logger.log(getattr(logging, level), message)
 
     def get_logger(self):
         return self.logger
