@@ -76,8 +76,8 @@ def test_invalid_commands():
         assert "Error: Invalid operation" in output
         assert "Error: Please enter valid numbers" in output
         assert "Error: Invalid input format" in output
-        assert "Error: Invalid save_history_to_csv command format" in output
-        assert "Error: Invalid load_history_from_csv command format" in output
+        assert "Error: Invalid save_history_to_csv command format. Use: save_history_to_csv <filename>" in output
+        assert "Error: Invalid load_history_from_csv command format. Use: load_history_from_csv <filename>" in output
 
 def test_plugin_error_handling():
     inputs = [
