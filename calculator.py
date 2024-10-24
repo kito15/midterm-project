@@ -1,13 +1,18 @@
+"""
+Enhanced Calculator REPL with Plugin System.
+Provides basic arithmetic operations and plugin support for extended functionality.
+"""
 import os
-import logging
-import pandas as pd
-from datetime import datetime
-import json
 import sys
+import json
+import logging
 import importlib
-from command import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand, SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
+from datetime import datetime
+from command import (
+    AddCommand, SubtractCommand, MultiplyCommand, DivideCommand,
+    SaveHistoryCommand, LoadHistoryCommand, ViewHistoryCommand, ClearHistoryCommand
+)
 from singleton import logger_instance, HistoryManager
-from strategy import CSVHistoryStrategy, FileLoggerStrategy, ConsoleLoggerStrategy
 
 # Add the parent directory to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -34,20 +39,25 @@ class PluginInterface:
         raise NotImplementedError
 
 def add(a, b):
+    """Add two numbers and return the result."""
     return a + b
 
 def subtract(a, b):
+    """Subtract second number from first and return the result."""
     return a - b
 
 def multiply(a, b):
+    """Multiply two numbers and return the result."""
     return a * b
 
 def divide(a, b):
+    """Divide first number by second and return the result."""
     if b == 0:
         return "Error: Division by zero"
     return a / b
 
 class PluginManager:
+    """Manages the loading and execution of calculator plugins."""
     def __init__(self):
         self.plugins = {}
         self.load_plugins()
@@ -58,7 +68,7 @@ class PluginManager:
         # Ensure plugins directory exists
         if not os.path.exists('plugins'):
             os.makedirs('plugins')
-            with open(os.path.join('plugins', '__init__.py'), 'w') as f:
+            with open(os.path.join('plugins', '__init__.py'), 'w', encoding='utf-8') as _:
                 pass
             logger.info("Plugins directory created")
             return
@@ -78,7 +88,7 @@ class PluginManager:
                         self.plugins[module_name] = module.plugin_instance
                         logger.info(f"Loaded plugin: {module_name}")
                 except Exception as e:
-                    logger.error(f"Error loading plugin {module_name}: {str(e)}")
+                    logger.error("Error loading plugin %s: %s", module_name, str(e))
 
     def list_plugins(self):
         """List all available plugins and their commands"""
@@ -97,8 +107,9 @@ class PluginManager:
     def execute_command(self, plugin_name, command, *args):
         """Execute a plugin command"""
         if plugin_name not in self.plugins:
-            logger.error(f"Plugin '{plugin_name}' not found")
-            return f"Plugin '{plugin_name}' not found"
+            error_msg = f"Plugin '{plugin_name}' not found"
+            logger.error(error_msg)
+            return error_msg
 
         plugin = self.plugins[plugin_name]
         commands = plugin.get_commands()
@@ -120,7 +131,11 @@ def main():
     print("Hey there! Welcome to the Enhanced Calculator REPL with Plugin System")
     print("Here are the commands you can use:")
     print("  Calculations: add, subtract, multiply, divide")
-    print("  History: save_history, load_history, view_history, clear_history, delete_history, save_history_to_csv <filename>, load_history_from_csv <filename>")
+    print("  History commands:")
+    print("    - save_history, load_history, view_history, clear_history")
+    print("    - delete_history")
+    print("    - save_history_to_csv <filename>")
+    print("    - load_history_from_csv <filename>")
     print("  Plugins: menu, use_plugin <plugin_name> <command> [args...]")
     print("Format for calculations: operation number1 number2")
     print("Type 'exit' to quit")
@@ -161,7 +176,7 @@ def main():
                 command = SaveHistoryCommand(history_manager, 'history.csv')
                 print(command.execute())
                 continue
-            elif user_input == 'load_history':
+            if user_input == 'load_history':
                 logger.info("User requested to load history")
                 command = LoadHistoryCommand(history_manager, 'history.csv')
                 print(command.execute())
