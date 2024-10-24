@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd  # Add this import
 from calculator import add, subtract, multiply, divide, HistoryManager, logger_instance, main
 
 @pytest.fixture
