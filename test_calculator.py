@@ -226,4 +226,8 @@ def test_repl_use_plugin_invalid_command(capsys):
 
 def test_repl_use_nonexistent_plugin(capsys):
     user_input = "use_plugin nonexistent_plugin power 2 3\nexit\n"
-    expected_output = "Plugin 'nonexis
+    expected_output = "Plugin 'nonexistent_plugin' not found\n"
+    with patch('builtins.input', side_effect=user_input.split()):
+        main()
+        captured = capsys.readouterr()
+        assert expected_output in captured.out
