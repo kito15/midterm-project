@@ -67,3 +67,43 @@ def test_plugin_description():
     desc = calc.get_description()
     assert isinstance(desc, str)
     assert len(desc) > 0
+
+def test_scientific_error_handling():
+    from plugins.scientific import ScientificCalculator
+    calc = ScientificCalculator()
+    
+    # Test power with invalid inputs
+    result = calc.power('invalid', 2)
+    assert "Error" in result
+    result = calc.power(2, 'invalid')
+    assert "Error" in result
+    
+    # Test sqrt with invalid input
+    result = calc.sqrt('invalid')
+    assert "Error" in result
+    result = calc.sqrt(-1)
+    assert "Error" in result
+    
+    # Test trig functions with invalid inputs
+    result = calc.sin('invalid')
+    assert "Error" in result
+    result = calc.cos('invalid')
+    assert "Error" in result
+
+def test_plugin_logging():
+    import logging
+    from plugins.scientific import ScientificCalculator
+    
+    # Capture log messages
+    with self.assertLogs(level='INFO') as logs:
+        calc = ScientificCalculator()
+        calc.get_description()
+        calc.get_commands()
+        calc.power(2, 3)
+        calc.sqrt(16)
+        calc.sin(0)
+        calc.cos(0)
+    
+    # Verify log messages were created
+    assert len(logs.output) > 0
+    assert any('INFO' in msg for msg in logs.output)

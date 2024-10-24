@@ -53,3 +53,36 @@ def test_invalid_file_operations(data_facade):
 
     result = data_facade.save_to_csv("/invalid/path/file.csv")
     assert "Error" in result
+
+def test_empty_data_operations(data_facade):
+    # Test operations on empty data
+    assert data_facade.view_data() == "No data available"
+    
+    # Test saving empty data
+    result = data_facade.save_to_csv("empty.csv")
+    assert "successfully" in result
+    
+    # Test loading empty file
+    data_facade.clear_data()
+    result = data_facade.load_from_csv("empty.csv")
+    assert "successfully" in result
+
+def test_data_validation(data_facade):
+    # Test with invalid data types
+    with pytest.raises(Exception):
+        data_facade.add_record(None, None, None, None)
+    
+    with pytest.raises(Exception):
+        data_facade.add_record('invalid', 'not_number', 'not_number', 'not_number')
+
+def test_concurrent_operations(data_facade):
+    # Test multiple operations in sequence
+    data_facade.add_record('add', 1, 2, 3)
+    data_facade.add_record('multiply', 2, 3, 6)
+    data_facade.save_to_csv('test1.csv')
+    data_facade.clear_data()
+    data_facade.load_from_csv('test1.csv')
+    
+    data = data_facade.view_data()
+    assert 'add' in data
+    assert 'multiply' in data
