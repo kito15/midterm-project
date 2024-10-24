@@ -124,39 +124,23 @@ class CalculatorHistory:
         self.history = pd.concat([self.history, new_record], ignore_index=True)
         logger.info(f"Added record to history: {operation} {num1} {num2} = {result}")
     
-    def save_history(self):
+    def save_history_to_csv(self, filename):
         try:
-            history_data = self.history.to_dict('records')
-            with open(__file__, 'r') as file:
-                content = file.read()
-            new_history = json.dumps(history_data)
-            new_content = content.replace(
-                'SAVED_HISTORY = """[{"timestamp": "2024-10-23 20:06:49.299196", "operation": "add", "num1": 1.0, "num2": 2.0, "result": 3.0}, {"timestamp": "2024-10-23 20:06:52.850854", "operation": "add", "num1": 2.0, "num2": 3.0, "result": 5.0}, {"timestamp": "2024-10-23 20:06:56.819044", "operation": "subtract", "num1": 2.0, "num2": 3.0, "result": -1.0}, {"timestamp": "2024-10-23 20:07:00.402757", "operation": "multiply", "num1": 2.0, "num2": 3.0, "result": 6.0}]"""',
-                f'SAVED_HISTORY = """{new_history}"""'
-            ).replace(
-                f'SAVED_HISTORY = """{SAVED_HISTORY}"""',
-                f'SAVED_HISTORY = """{new_history}"""'
-            )
-            with open(__file__, 'w') as file:
-                file.write(new_content)
-            logger.info("History saved successfully")
-            return "History saved successfully"
+            self.history.to_csv(filename, index=False)
+            logger.info(f"History saved to {filename} successfully")
+            return f"History saved to {filename} successfully"
         except Exception as e:
-            logger.error(f"Error saving history: {str(e)}")
-            return f"Error saving history: {str(e)}"
+            logger.error(f"Error saving history to {filename}: {str(e)}")
+            return f"Error saving history to {filename}: {str(e)}"
     
-    def load_history(self):
+    def load_history_from_csv(self, filename):
         try:
-            history_data = json.loads(SAVED_HISTORY)
-            if history_data:
-                self.history = pd.DataFrame(history_data)
-                logger.info("History loaded successfully")
-                return "History loaded successfully"
-            logger.info("No saved history found")
-            return "No saved history found"
+            self.history = pd.read_csv(filename)
+            logger.info(f"History loaded from {filename} successfully")
+            return f"History loaded from {filename} successfully"
         except Exception as e:
-            logger.error(f"Error loading history: {str(e)}")
-            return f"Error loading history: {str(e)}"
+            logger.error(f"Error loading history from {filename}: {str(e)}")
+            return f"Error loading history from {filename}: {str(e)}"
     
     def view_history(self):
         if len(self.history) == 0:
@@ -192,7 +176,7 @@ def main():
     print("Enhanced Calculator REPL with Plugin System")
     print("Available commands:")
     print("  Calculations: add, subtract, multiply, divide")
-    print("  History: save_history, load_history, view_history, clear_history, delete_history")
+    print("  History: save_history, load_history, view_history, clear_history, delete_history, save_history_to_csv <filename>, load_history_from_csv <filename>")
     print("  Plugins: menu, use_plugin <plugin_name> <command> [args...]")
     print("Format for calculations: operation number1 number2")
     print("Type 'exit' to quit")
@@ -247,6 +231,26 @@ def main():
             elif user_input == 'delete_history':
                 logger.info("User requested to delete history")
                 print(history_manager.delete_history())
+                continue
+            elif user_input.startswith('save_history_to_csv '):
+                parts = user_input.split()
+                if len(parts) != 2:
+                    logger.warning("Invalid save_history_to_csv command format")
+                    print("Error: Invalid save_history_to_csv command format. Use: save_history_to_csv <filename>")
+                    continue
+                filename = parts[1]
+                logger.info(f"User requested to save history to CSV: {filename}")
+                print(history_manager.save_history_to_csv(filename))
+                continue
+            elif user_input.startswith('load_history_from_csv '):
+                parts = user_input.split()
+                if len(parts) != 2:
+                    logger.warning("Invalid load_history_from_csv command format")
+                    print("Error: Invalid load_history_from_csv command format. Use: load_history_from_csv <filename>")
+                    continue
+                filename = parts[1]
+                logger.info(f"User requested to load history from CSV: {filename}")
+                print(history_manager.load_history_from_csv(filename))
                 continue
             
             parts = user_input.split()
