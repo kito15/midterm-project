@@ -103,4 +103,4 @@ def test_plugin_error_handling():
         output = fake_out.getvalue()
         assert "Plugin 'nonexistent' not found" in output
         assert "Command 'invalid_command' not found" in output
-        assert "Error: Invalid plugin command format" in output
+        assert "Error: Invalid input format" in output
