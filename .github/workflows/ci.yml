@@ -27,9 +27,15 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
           LOG_LEVEL: DEBUG
           LOG_FILE: logs/test.log
+      - name: Display test logs
+        run: |
+          echo "=== Test Logs ==="
+          cat logs/test.log  # Display logs in the console
       - name: Upload test logs
         if: always()
-        uses: actions/upload-artifact@v3  # Updated to v3
+        uses: actions/upload-artifact@v3
         with:
           name: test-logs
           path: logs/test.log
+          if-no-files-found: warn
+          include-hidden-files: false
