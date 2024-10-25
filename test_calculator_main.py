@@ -1,10 +1,14 @@
+"""
+Test module for calculator application.
+Contains integration tests for basic operations, plugin system, and history management.
+"""
+import io
+import unittest.mock
 import pytest
 from calculator import PluginManager, main
-from unittest.mock import patch
-import io
-import sys
 
 def test_plugin_manager_initialization():
+    """Test the initialization of PluginManager class."""
     manager = PluginManager()
     assert hasattr(manager, 'plugins')
     assert len(manager.plugins) > 0
@@ -17,30 +21,35 @@ def test_plugin_manager_initialization():
     ("divide 5 0", "Error: Division by zero"),
 ])
 def test_calculator_operations_integration(input_str, expected):
-    with patch('builtins.input', side_effect=[input_str, 'exit']), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    """Test basic calculator operations through integration testing."""
+    with unittest.mock.patch('builtins.input', side_effect=[input_str, 'exit']), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         assert expected in fake_out.getvalue()
 
 def test_invalid_inputs():
-    with patch('builtins.input', side_effect=['invalid command', 'exit']), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    """Test handling of invalid input commands."""
+    with unittest.mock.patch('builtins.input', side_effect=['invalid command', 'exit']), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         assert "Error" in fake_out.getvalue()
 
 def test_plugin_menu():
-    with patch('builtins.input', side_effect=['menu', 'exit']), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    """Test the display of plugin menu."""
+    with unittest.mock.patch('builtins.input', side_effect=['menu', 'exit']), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         assert "Available Plugins" in fake_out.getvalue()
 
 def test_plugin_execution():
-    with patch('builtins.input', side_effect=['use_plugin scientific sqrt 16', 'exit']), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    """Test execution of a plugin command."""
+    with unittest.mock.patch('builtins.input', side_effect=['use_plugin scientific sqrt 16', 'exit']), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         assert "Result: 4.0" in fake_out.getvalue()
 
 def test_history_commands():
+    """Test various history-related commands."""
     inputs = [
         'add 2 3',
         'save_history',
@@ -52,8 +61,8 @@ def test_history_commands():
         'load_history_from_csv test.csv',
         'exit'
     ]
-    with patch('builtins.input', side_effect=inputs), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    with unittest.mock.patch('builtins.input', side_effect=inputs), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         output = fake_out.getvalue()
         assert "Result: 5" in output
@@ -61,6 +70,7 @@ def test_history_commands():
         assert "cleared" in output
 
 def test_invalid_commands():
+    """Test handling of various invalid command scenarios."""
     inputs = [
         'invalid_op 1 2',
         'add invalid 2',
@@ -69,25 +79,26 @@ def test_invalid_commands():
         'load_history_from_csv',
         'exit'
     ]
-    with patch('builtins.input', side_effect=inputs), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    with unittest.mock.patch('builtins.input', side_effect=inputs), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         output = fake_out.getvalue()
         assert "Error: Invalid operation" in output
         assert "Error: Please enter valid numbers" in output
         assert "Error: Invalid input format" in output
-        assert "Error: Invalid save_history_to_csv command format. Use: save_history_to_csv <filename>" in output
-        assert "Error: Invalid load_history_from_csv command format. Use: load_history_from_csv <filename>" in output
+        assert "Error: Invalid save_history_to_csv command format" in output
+        assert "Error: Invalid load_history_from_csv command format" in output
 
 def test_plugin_error_handling():
+    """Test error handling in plugin system."""
     inputs = [
         'use_plugin nonexistent command',
         'use_plugin scientific invalid_command',
         'use_plugin',
         'exit'
     ]
-    with patch('builtins.input', side_effect=inputs), \
-         patch('sys.stdout', new=io.StringIO()) as fake_out:
+    with unittest.mock.patch('builtins.input', side_effect=inputs), \
+         unittest.mock.patch('sys.stdout', new=io.StringIO()) as fake_out:
         main()
         output = fake_out.getvalue()
         assert "Plugin 'nonexistent' not found" in output

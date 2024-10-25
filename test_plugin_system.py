@@ -111,7 +111,6 @@ def test_scientific_edge_cases():
     assert calc.power(0, 5) == 0.0
     assert calc.power(1, 1000) == 1.0
     assert calc.power(2, 0) == 1.0
-    
     # Test sqrt with zero and one
     assert calc.sqrt(0) == 0.0
     assert calc.sqrt(1) == 1.0
