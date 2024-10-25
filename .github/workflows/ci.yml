@@ -21,6 +21,15 @@ jobs:
       - name: Create logs directory
         run: mkdir -p logs
       - name: Run tests
-        run: pytest --cov=.
+        run: |
+          python -m pytest --cov=. --log-file=logs/test.log --log-file-level=DEBUG
         env:
           PYTHONPATH: ${{ github.workspace }}
+          LOG_LEVEL: DEBUG
+          LOG_FILE: logs/test.log
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-logs
+          path: logs/test.log
