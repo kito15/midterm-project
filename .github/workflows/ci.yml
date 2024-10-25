@@ -29,7 +29,7 @@ jobs:
           LOG_FILE: logs/test.log
       - name: Upload test logs
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  # Updated to v3
         with:
           name: test-logs
           path: logs/test.log
