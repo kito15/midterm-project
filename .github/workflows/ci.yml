@@ -21,6 +21,6 @@ jobs:
       - name: Create logs directory
         run: mkdir -p logs
       - name: Run tests
-        run: pytest
+        run: pytest --cov=.
         env:
           PYTHONPATH: ${{ github.workspace }}
