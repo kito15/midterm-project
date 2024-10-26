@@ -159,6 +159,25 @@ Default history structure:
     "result": 3.0
 }
 ```
+### Error Handling: LBYL and EAFP
+
+This calculator application applies both *Look Before You Leap* (LBYL) and *Easier to Ask for Forgiveness than Permission* (EAFP):
+- **LBYL**: Checks, such as `if num2 == 0`, prevent errors before they occur.
+- **EAFP**: Uses `try-except` to handle unexpected input issues, allowing the program to manage errors gracefully.
+
+```
+try:
+    num1 = float(num1)
+    num2 = float(num2)
+    if operation == 'divide' and num2 == 0:
+        raise ValueError("Cannot divide by zero")
+    result = execute_operation(operation, num1, num2)
+    print(f"Result: {result}")
+except ValueError as e:
+    print(f"Input Error: {e}")
+except Exception as e:
+    print(f"Unexpected Error: {e}")
+```
 
 ## Error Handling
 
