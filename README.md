@@ -6,7 +6,7 @@ A calculator implementation featuring a modular architecture, command pattern im
 
 ## Core Components
 
-### Calculator Engine
+### Calculator Application
 The core calculator provides basic arithmetic operations through a command-based interface:
 ```python
 # Basic arithmetic operations
