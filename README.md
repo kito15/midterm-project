@@ -197,14 +197,6 @@ pytest
 
 # Run tests with coverage report
 
-pytest --cov=calculator tests/
-
-# Run specific test file
-
-pytest tests/test_calculator.py
-
-# Run tests matching specific pattern
-
-pytest -k "test_add"
+pytest --cov=.
 
 ```
