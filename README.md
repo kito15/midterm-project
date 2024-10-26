@@ -182,3 +182,29 @@ Create test cases covering:
 - Plugin system functionality
 - Data persistence operations
 - Error handling scenarios
+
+### Setup and Running Tests
+
+```bash
+
+# Install test dependencies
+
+pip install pytest pytest-cov
+
+# Run all tests
+
+pytest
+
+# Run tests with coverage report
+
+pytest --cov=calculator tests/
+
+# Run specific test file
+
+pytest tests/test_calculator.py
+
+# Run tests matching specific pattern
+
+pytest -k "test_add"
+
+```
