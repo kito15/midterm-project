@@ -165,7 +165,7 @@ This calculator application applies both *Look Before You Leap* (LBYL) and *Easi
 - **LBYL**: Checks, such as `if num2 == 0`, prevent errors before they occur.
 - **EAFP**: Uses `try-except` to handle unexpected input issues, allowing the program to manage errors gracefully.
 
-```
+```python
 try:
     num1 = float(num1)
     num2 = float(num2)
